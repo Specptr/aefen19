@@ -1,3 +1,7 @@
-# Dataset
+# processed
 
-This directory contains the training data used for LoRA fine-tuning.
+Converted JSONL format used for training.
+
+Example:
+
+{"messages":[{"role":"user","content":"Hello"},{"role":"assistant","content":"Hi"}]}
