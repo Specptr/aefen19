@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="assets/poetic.png" alt="profile" width="400">
+</div>
+
 # Aefen19
 
 Aefen (Old English: ǣfen) means *evening*.  
