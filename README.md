@@ -9,6 +9,7 @@ Aefen19 refers to the quiet hour around 19:00, when the day slows down and conve
 
 This project explores LoRA fine-tuning for building calm, natural dialogue models.
 
+## Demo
 <div align="center">
   <img src="assets/v0.1.png" alt="profile" width="800">
 </div>
