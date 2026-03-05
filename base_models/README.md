@@ -1,10 +1,18 @@
 # Base Models
 
-This directory is used to store base models locally.
+This directory stores the base language model weights.
 
-The repository does **not** include model weights.
+Due to size limitations, the base model is **not included in this repository**.
 
-To download the base model used in this project:
+## Download
 
-```bash
-hf download Qwen/Qwen2.5-7B-Instruct --local-dir base_models/qwen2.5-7b-instruct
+Download the model from HuggingFace:
+
+https://huggingface.co/Qwen/Qwen2.5-7B-Instruct
+
+## Notes
+
+The path must match the value in `config.py`:
+
+```python
+BASE_MODEL = "base_models/qwen2.5-7b-instruct"
