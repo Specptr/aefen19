@@ -1,0 +1,97 @@
+# train_lora.py
+# 26.3.4
+import torch
+from datasets import load_from_disk
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    TrainingArguments,
+    Trainer,
+    BitsAndBytesConfig
+)
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from config import *
+
+MODEL_PATH = BASE_MODEL
+DATASET_PATH = TOKENIZED_DATA
+OUTPUT_PATH = ADAPTER_DIR
+
+# ds = load_from_disk("data/tokenized/poetic_0304")
+# print(ds[0])
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_quant_type="nf4"
+)
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_PATH,
+    device_map="auto",
+    quantization_config=bnb_config
+)
+
+model = prepare_model_for_kbit_training(model)
+
+lora_config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM",
+    target_modules=[
+        "q_proj","k_proj","v_proj","o_proj",
+        "gate_proj","up_proj","down_proj"
+    ]
+)
+
+model = get_peft_model(model, lora_config)
+
+dataset = load_from_disk(DATASET_PATH)
+
+def collate(batch):
+
+    max_len = max(len(x["input_ids"]) for x in batch)
+
+    def pad(seq, val):
+        return seq + [val]*(max_len-len(seq))
+
+    input_ids = [pad(x["input_ids"], tokenizer.pad_token_id) for x in batch]
+    attn = [pad(x["attention_mask"], 0) for x in batch]
+    labels = [pad(x["labels"], -100) for x in batch]
+
+    return {
+        "input_ids": torch.tensor(input_ids),
+        "attention_mask": torch.tensor(attn),
+        "labels": torch.tensor(labels)
+    }
+
+args = TrainingArguments(
+    output_dir=OUTPUT_PATH,
+    per_device_train_batch_size=1,
+    gradient_accumulation_steps=8,
+    num_train_epochs=3,
+    learning_rate=5e-5,
+    logging_steps=10,
+    save_strategy="epoch",
+    fp16=True,
+    report_to="none",
+    optim="paged_adamw_8bit"
+)
+
+trainer = Trainer(
+    model=model,
+    args=args,
+    train_dataset=dataset,
+    data_collator=collate
+)
+
+trainer.train()
+
+model.save_pretrained(OUTPUT_PATH)
+tokenizer.save_pretrained(OUTPUT_PATH)
+
+print("LoRA saved:", OUTPUT_PATH)
