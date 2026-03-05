@@ -98,7 +98,7 @@ class MainWindow(QWidget):
 
         # ===== 中间区域 =====
         middle_layout = QHBoxLayout()
-        middle_layout.setSpacing(30)
+        middle_layout.setSpacing(40)
 
         # 左侧照片区
         self.photo_frame = QFrame()
@@ -118,11 +118,13 @@ class MainWindow(QWidget):
                 )
             )
         else:
-            self.photo_label.setText("Her")
+            self.photo_label.setText("photo")
+        self.photo_label.setObjectName("no_frame")
 
         photo_layout.addWidget(self.photo_label)
         self.photo_frame.setLayout(photo_layout)
         self.photo_frame.setFixedWidth(240)
+        # self.photo_frame.setObjectName("no_frame")
 
         # 右侧对话区
         self.chat_frame = QFrame()
@@ -149,9 +151,9 @@ class MainWindow(QWidget):
         control_layout = QGridLayout()
         control_layout.setSpacing(15)
 
-        btn1 = QPushButton("reset")
-        btn2 = QPushButton("clear")
-        btn3 = QPushButton("kiss")
+        btn1 = QPushButton("")
+        btn2 = QPushButton("")
+        btn3 = QPushButton("")
 
         control_layout.addWidget(btn1, 0, 0)
         control_layout.addWidget(btn2, 0, 1)
@@ -214,7 +216,7 @@ class MainWindow(QWidget):
 
         char_format_assistant = QTextCharFormat()
         char_format_assistant.setForeground(QColor("#ffffff"))
-      
+
         cursor.insertText("\n▻ ", char_format_assistant)
 
         self.chat_area.setTextCursor(cursor)
@@ -243,7 +245,7 @@ class MainWindow(QWidget):
         char_format = QTextCharFormat()
         char_format.setForeground(QColor("#ffffff"))
 
-        cursor.insertText("\n\n", char_format)
+        cursor.insertText("\n", char_format)
 
         self.chat_area.setTextCursor(cursor)
         self.chat_area.ensureCursorVisible()
