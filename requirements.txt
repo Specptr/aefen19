@@ -1,6 +1,10 @@
-torch
-transformers
-datasets
-peft
-accelerate
-bitsandbytes
+torch>=2.2
+transformers>=4.38
+peft>=0.10
+accelerate>=0.28
+bitsandbytes>=0.42
+pynvml>=11.5
+PySide6>=6.6
+modelscope>=1.12
+sentencepiece
+safetensors
